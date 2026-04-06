@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "nsga-ii"
+version = "0.1.0"
+description = ""
+authors = ["bchanona bh274266@gmail.com"]
+package-mode = false
+[tool.poetry.dependencies]
+python = ">=3.11"
+numpy = "^2.4.4"
+pandas = "^3.0.2"
+python-dotenv = "^1.0.0"
+fastapi = {extras = ["standard"], version = "^0.135.3"}
+pydantic = "^2.12.5"
+uvicorn = "^0.43.0"
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

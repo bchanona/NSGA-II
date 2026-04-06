@@ -1,0 +1,4 @@
+.env
+./.venv
+./output_nsga2 # Ignorar la carpeta de salida
+./__pycache__

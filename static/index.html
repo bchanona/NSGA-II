@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SocialGenOPT — Optimizador de Calendarios</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────── -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">S</div>
+    <div>
+      <div class="logo-text">Social<span>Gen</span>OPT</div>
+      <div class="tagline">Optimizador editorial multiobjetivo</div>
+    </div>
+  </div>
+  <nav>
+    <a href="#evolution">Evolución</a>
+    <a href="#pareto">Pareto</a>
+    <a href="#solutions">Soluciones</a>
+    <a href="#calendar">Calendario</a>
+    <a href="#comparison">Comparación</a>
+  </nav>
+</header>
+
+<div class="page">
+
+  <!-- ── Hero / Panel de control ───────────────────────────────── -->
+  <div class="hero">
+    <div>
+      <h1>Optimiza tu <em>calendario</em><br>editorial con IA</h1>
+      <p>
+        SocialGenOPT usa NSGA-II para encontrar la frontera de Pareto entre
+        engagement, alcance, retención, saturación y tiempo de producción.
+      </p>
+
+      <div class="params-grid">
+        <div class="param-item">
+          <label>Publicaciones / semana</label>
+          <input type="number" id="n_posts" value="7" min="3" max="14">
+        </div>
+        <div class="param-item">
+          <label>Tamaño de población</label>
+          <input type="number" id="pop_size" value="60" min="20" max="200">
+        </div>
+        <div class="param-item">
+          <label>Generaciones</label>
+          <input type="number" id="generations" value="80" min="20" max="300">
+        </div>
+        <div class="param-item">
+          <label>Tasa de mutación</label>
+          <input type="number" id="mutation_rate" value="0.3" min="0.05" max="0.9" step="0.05">
+        </div>
+        <div class="param-item">
+          <label>Semilla aleatoria</label>
+          <input type="number" id="seed" value="42">
+        </div>
+        <div class="param-item">
+          <label>Plataforma</label>
+          <select id="platform">
+            <option value="instagram">Instagram</option>
+            <option value="tiktok">TikTok</option>
+            <option value="youtube">YouTube</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-run" id="btn-run" onclick="runOptimize()">
+        <div class="spin"></div>
+        <span>▶ Ejecutar Optimización</span>
+      </button>
+    </div>
+
+    <div class="status-panel">
+      <div class="status-bar" id="status-bar">Listo para optimizar...</div>
+      <div class="status-hints">
+        <div class="hint-item"><span class="hint-dot"></span> NSGA-II multiobjetivo</div>
+        <div class="hint-item"><span class="hint-dot"></span> 5 funciones objetivo</div>
+        <div class="hint-item"><span class="hint-dot"></span> Frontera de Pareto real</div>
+        <div class="hint-item"><span class="hint-dot"></span> Calendario semanal óptimo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 1. Evolución ──────────────────────────────────────────── -->
+  <div class="section" id="evolution">
+    <div class="sec-title">
+      <div class="sec-num">1</div>
+      Evolución de aptitud por generación
+    </div>
+    <div class="card">
+      <div class="chart-wrap" id="evo-wrap">
+        <div class="skeleton"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 2. Pareto ─────────────────────────────────────────────── -->
+  <div class="section" id="pareto">
+    <div class="sec-title">
+      <div class="sec-num">2</div>
+      Frontera de Pareto
+    </div>
+    <div class="card-grid-2">
+      <div class="card">
+        <div class="chart-subtitle">Engagement vs Alcance — color = retención</div>
+        <div class="pareto-wrap">
+          <div class="skeleton" id="pareto-sk"></div>
+          <canvas id="pareto-chart" style="display:none"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="chart-subtitle">Engagement vs Saturación — color = tiempo de producción</div>
+        <div class="pareto-wrap">
+          <div class="skeleton" id="pareto-sk2"></div>
+          <canvas id="pareto-chart2" style="display:none"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3. Top Soluciones ─────────────────────────────────────── -->
+  <div class="section" id="solutions">
+    <div class="sec-title">
+      <div class="sec-num">3</div>
+      Tabla comparativa — Mejores soluciones
+    </div>
+    <div class="card">
+      <div class="sol-tabs" id="sol-tabs"></div>
+      <div class="stat-row" id="sol-metrics"></div>
+      <div style="overflow-x:auto">
+        <table class="sol-table">
+          <thead>
+            <tr>
+              <th>Día</th>
+              <th>Hora</th>
+              <th>Tipo</th>
+              <th>Engagement</th>
+              <th>Alcance</th>
+              <th>Retención</th>
+              <th>Saturación</th>
+              <th>Prod. (h)</th>
+            </tr>
+          </thead>
+          <tbody id="sol-body">
+            <tr>
+              <td colspan="8" style="text-align:center;color:var(--muted);padding:2.5rem">
+                Ejecuta la optimización para ver resultados
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 4. Calendario ─────────────────────────────────────────── -->
+  <div class="section" id="calendar">
+    <div class="sec-title">
+      <div class="sec-num">4</div>
+      Calendario semanal optimizado
+    </div>
+    <div class="card">
+      <div class="cal-tabs" id="cal-tabs"></div>
+      <div class="week-grid" id="week-grid">
+        <div style="grid-column:span 7;text-align:center;color:var(--muted);padding:2.5rem">
+          Ejecuta la optimización para ver el calendario
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 5. Comparación ────────────────────────────────────────── -->
+  <div class="section" id="comparison">
+    <div class="sec-title">
+      <div class="sec-num">5</div>
+      Estrategia aleatoria vs. optimizada
+    </div>
+    <div class="card" id="cmp-card">
+      <div style="text-align:center;color:var(--muted);padding:2.5rem">
+        Ejecuta la optimización para ver la comparación
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.page -->
+
+<footer>
+  <strong>SocialGenOPT</strong> &nbsp;·&nbsp;
+  Powered by <span>NSGA-II</span> &nbsp;·&nbsp;
+  &copy; 2026
+</footer>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
