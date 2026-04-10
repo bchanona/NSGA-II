@@ -57,12 +57,12 @@ DATA_PATH = Path(__file__).parent / "data" / "knowledge_base.csv"
 
 # ── Modelos Pydantic ────────────────────────────────────────────────────────────
 class OptimizeRequest(BaseModel):
-    platform:      Optional[str] = "instagram"
-    pop_size:      Optional[int] = 60
-    generations:   Optional[int] = 80
-    n_posts:       Optional[int] = 7
-    mutation_rate: Optional[float] = 0.3
-    seed:          Optional[int] = 42
+    platform:       Optional[str] = "instagram"
+    pop_size:       Optional[int] = 60
+    generations:    Optional[int] = 80
+    n_posts:        Optional[int] = 7
+    mutation_rate:  Optional[float] = 0.3
+    hours_available: Optional[int] = 10
 
 
 # ── Helpers ─────────────────────────────────────────────────────────────────────
@@ -95,6 +95,10 @@ def optimize(req: OptimizeRequest):
     """
     knowledge, types, hours, days = load_knowledge(str(DATA_PATH), req.platform)
 
+    # Generar seed automáticamente basado en timestamp
+    import time as time_module
+    seed = int(time_module.time() * 1000) % 2147483647
+
     t0 = time.time()
     pareto_pop, pareto_fits, evolution, initial_pop, initial_fits = run_nsga2(
         knowledge, types, hours, days,
@@ -102,7 +106,8 @@ def optimize(req: OptimizeRequest):
         generations=req.generations,
         n_posts=req.n_posts,
         mutation_rate=req.mutation_rate,
-        seed=req.seed,
+        hours_available=req.hours_available,
+        seed=seed,
     )
     elapsed = round(time.time() - t0, 2)
 

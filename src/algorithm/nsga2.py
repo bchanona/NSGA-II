@@ -117,7 +117,7 @@ def nsga2(knowledge, types, hours, days,
 
 def run_nsga2(knowledge, types, hours, days,
               pop_size=60, generations=80, n_posts=7,
-              mutation_rate=0.3, seed=42):
+              mutation_rate=0.3, hours_available=10, seed=42):
     
 
     from copy import deepcopy
@@ -134,7 +134,7 @@ def run_nsga2(knowledge, types, hours, days,
     pareto_pop, pareto_fits, evolution = nsga2(
         knowledge, types, hours, days,
         n_posts=n_posts,
-        hours_available=10,
+        hours_available=hours_available,
         pop_size=pop_size,
         n_generations=generations,
         mutation_rate=mutation_rate,

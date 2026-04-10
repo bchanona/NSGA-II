@@ -6,6 +6,33 @@ let evoChart     = null;
 let paretoChart  = null;
 let paretoChart2 = null;
 
+// ── Validar DOM al cargar ───────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('🔍 Validando elementos del DOM...');
+  
+  const requiredElements = [
+    'n_posts', 'pop_size', 'generations', 'mutation_rate', 
+    'hours_available', 'platform', 'btn-run', 'status-bar'
+  ];
+  
+  let missing = [];
+  requiredElements.forEach(id => {
+    if (!document.getElementById(id)) {
+      console.error(`❌ Elemento faltante: ${id}`);
+      missing.push(id);
+    } else {
+      console.log(`✅ ${id}`);
+    }
+  });
+  
+  if (missing.length > 0) {
+    console.error('⚠️ Elementos faltantes:', missing);
+    document.getElementById('status-bar').textContent = `❌ Error: Elementos faltantes en la página: ${missing.join(', ')}`;
+  } else {
+    console.log('✅ Todos los elementos encontrados');
+  }
+});
+
 const TYPE_COLORS = {
   reel:     '#8A5200',
   image:    '#0D6640',
@@ -32,14 +59,26 @@ async function runOptimize() {
   btn.classList.add('loading');
   sb.textContent = '⚙ Ejecutando algoritmo NSGA-II...';
 
-  const body = {
-    n_posts:       +document.getElementById('n_posts').value,
-    pop_size:      +document.getElementById('pop_size').value,
-    generations:   +document.getElementById('generations').value,
-    mutation_rate: +document.getElementById('mutation_rate').value,
-    seed:          +document.getElementById('seed').value,
-    platform:       document.getElementById('platform').value,
+  // Validación de elementos del DOM
+  const getElementValue = (id, defaultValue) => {
+    const el = document.getElementById(id);
+    if (!el) {
+      console.warn(`⚠️ Elemento no encontrado: ${id}`);
+      return defaultValue;
+    }
+    return el.value;
   };
+
+  const body = {
+    n_posts:       +getElementValue('n_posts', 7),
+    pop_size:      +getElementValue('pop_size', 60),
+    generations:   +getElementValue('generations', 80),
+    mutation_rate: +getElementValue('mutation_rate', 0.3),
+    hours_available: +getElementValue('hours_available', 10),
+    platform:      getElementValue('platform', 'instagram'),
+  };
+
+  console.log('📤 Enviando request con parámetros:', body);
 
   try {
     const r = await fetch(`${API}/api/optimize`, {

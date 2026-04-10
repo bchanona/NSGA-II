@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>SocialGenOPT — Optimizador de Calendarios</title>
-  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="stylesheet" href="/static/styles.css?v=2">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
@@ -56,8 +59,8 @@
           <input type="number" id="mutation_rate" value="0.3" min="0.05" max="0.9" step="0.05">
         </div>
         <div class="param-item">
-          <label>Semilla aleatoria</label>
-          <input type="number" id="seed" value="42">
+          <label>Horas disponibles / semana</label>
+          <input type="number" id="hours_available" value="10" min="5" max="20">
         </div>
         <div class="param-item">
           <label>Plataforma</label>
@@ -195,6 +198,6 @@
   &copy; 2026
 </footer>
 
-<script src="/static/script.js"></script>
+<script src="/static/script.js?v=2"></script>
 </body>
 </html>
