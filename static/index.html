@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>SocialGenOPT — Optimizador de Calendarios</title>
-  <link rel="stylesheet" href="/static/styles.css?v=2">
+  <link rel="stylesheet" href="/static/styles.css?v=3">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body>
@@ -84,7 +84,7 @@
         <div class="hint-item"><span class="hint-dot"></span> NSGA-II multiobjetivo</div>
         <div class="hint-item"><span class="hint-dot"></span> 5 funciones objetivo</div>
         <div class="hint-item"><span class="hint-dot"></span> Frontera de Pareto real</div>
-        <div class="hint-item"><span class="hint-dot"></span> Calendario semanal óptimo</div>
+        <div class="hint-item"><span class="hint-dot"></span> Secuencia temática (sᵢ)</div>
       </div>
     </div>
   </div>
@@ -135,6 +135,10 @@
     <div class="card">
       <div class="sol-tabs" id="sol-tabs"></div>
       <div class="stat-row" id="sol-metrics"></div>
+
+      <!-- Secuencia temática sᵢ de la solución seleccionada -->
+      <div id="sol-theme-seq"></div>
+
       <div style="overflow-x:auto">
         <table class="sol-table">
           <thead>
@@ -142,6 +146,7 @@
               <th>Día</th>
               <th>Hora</th>
               <th>Tipo</th>
+              <th>Tema (sᵢ)</th>
               <th>Engagement</th>
               <th>Alcance</th>
               <th>Retención</th>
@@ -151,7 +156,7 @@
           </thead>
           <tbody id="sol-body">
             <tr>
-              <td colspan="8" style="text-align:center;color:var(--muted);padding:2.5rem">
+              <td colspan="9" style="text-align:center;color:var(--muted);padding:2.5rem">
                 Ejecuta la optimización para ver resultados
               </td>
             </tr>
@@ -169,6 +174,10 @@
     </div>
     <div class="card">
       <div class="cal-tabs" id="cal-tabs"></div>
+
+      <!-- Secuencia temática sᵢ del calendario activo -->
+      <div id="cal-theme-seq"></div>
+
       <div class="week-grid" id="week-grid">
         <div style="grid-column:span 7;text-align:center;color:var(--muted);padding:2.5rem">
           Ejecuta la optimización para ver el calendario
@@ -198,6 +207,6 @@
   &copy; 2026
 </footer>
 
-<script src="/static/script.js?v=2"></script>
+<script src="/static/script.js?v=3"></script>
 </body>
 </html>

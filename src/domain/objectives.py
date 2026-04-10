@@ -1,4 +1,3 @@
-
 from collections import Counter
 from src.utils.metrics_lookup import lookup_metrics
 from src.domain.constants import PRODUCTION_COST
@@ -14,16 +13,6 @@ def init_normalization(knowledge: dict, n_posts: int = 7):
     """
     Calcula los rangos máximos reales desde la knowledge base y los
     almacena en las variables globales de este módulo.
-
-    Llama a esta función en main.py así:
-        from src.domain.objectives import init_normalization
-        knowledge, types, hours, days = load_knowledge(...)
-        init_normalization(knowledge, args.max_posts)
-
-    Parámetros
-    ----------
-    knowledge : dict  — el dict devuelto por load_knowledge()
-    n_posts   : int   — número de publicaciones semanales (para escalar sumas)
     """
     global _ENG_MAX, _RCH_MAX, _RET_MAX
 
@@ -31,12 +20,10 @@ def init_normalization(knowledge: dict, n_posts: int = 7):
     rch_vals  = [v['reach']      for v in knowledge.values()]
     ret_vals  = [v['retention']  for v in knowledge.values()]
 
-    # Suma máxima posible = n_posts × mejor valor individual
     _ENG_MAX = n_posts * max(eng_vals) if eng_vals else 1.0
     _RCH_MAX = n_posts * max(rch_vals) if rch_vals else 1.0
-    _RET_MAX = max(ret_vals)            if ret_vals else 1.0   # es promedio, no suma
+    _RET_MAX = max(ret_vals)            if ret_vals else 1.0
 
-    # Evitar división por cero
     _ENG_MAX  = max(_ENG_MAX,  1e-9)
     _RCH_MAX  = max(_RCH_MAX,  1e-9)
     _RET_MAX  = max(_RET_MAX,  1e-9)
@@ -73,19 +60,35 @@ def f3_retention(individual, knowledge):
     return -(avg / _RET_MAX)                # en [-1, 0]
 
 
-# ── Objetivo 4: Saturación de audiencia + homogeneidad de formato ─────────────
+# ── Objetivo 4: Saturación de audiencia + homogeneidad de formato
+#               + penalización por secuencia temática incoherente (sᵢ) ────────
 def f4_saturation(individual, knowledge=None):
     """
-    Combina dos señales en [0, 1]:
-      a) time_sat  — pubs en el mismo día con <3h de diferencia.
-      b) type_sat  — si >60% de pubs son del mismo tipo (saturación de formato).
-    Ponderación 50/50.
+    Combina tres señales en [0, 1]:
+
+      a) time_sat   — publicaciones en el mismo día con < 3h de diferencia
+                      (saturación temporal).
+      b) type_sat   — si > 60% de publicaciones son del mismo tipo
+                      (saturación de formato).
+      c) theme_sat  — penalización por baja coherencia de secuencia temática (sᵢ):
+                      se evalúa la afinidad entre temas consecutivos según el
+                      orden cronológico del calendario; una secuencia con temas
+                      repetidos o con baja afinidad eleva la saturación percibida.
+
+    Ponderación: 40% time_sat + 30% type_sat + 30% theme_sat.
+
+    La incorporación de theme_sat materializa la variable de decisión sᵢ
+    (secuencia temática) dentro de la función de saturación existente,
+    sin añadir un sexto objetivo al algoritmo.
     """
     if not individual:
         return 1.0
 
+    from src.domain.individual import THEME_AFFINITY, THEMES
+
     n = len(individual)
 
+    # ── a) Saturación temporal ────────────────────────────────────────
     by_day = {}
     for pub in individual:
         by_day.setdefault(pub['day'], []).append(pub['hour'])
@@ -98,11 +101,29 @@ def f4_saturation(individual, knowledge=None):
                 conflicts += 1
     time_sat = conflicts / max(n - 1, 1)
 
+    # ── b) Saturación de formato ──────────────────────────────────────
     type_counts = Counter(p['type'] for p in individual)
     top_ratio   = type_counts.most_common(1)[0][1] / n
     type_sat    = max(0.0, (top_ratio - 0.60) / 0.40)
 
-    return 0.5 * time_sat + 0.5 * type_sat
+    # ── c) Saturación de secuencia temática (sᵢ) ─────────────────────
+    # Ordenar publicaciones cronológicamente (día, hora) para evaluar la
+    # secuencia tal como la experimenta la audiencia.
+    sorted_pubs = sorted(individual, key=lambda p: (p['day'], p['hour']))
+    themes_seq  = [p.get('theme', 'educativo') for p in sorted_pubs]
+
+    if len(themes_seq) >= 2:
+        affinity_scores = []
+        for prev, curr in zip(themes_seq, themes_seq[1:]):
+            score = THEME_AFFINITY.get(prev, {}).get(curr, 0.6)
+            affinity_scores.append(score)
+        avg_affinity = sum(affinity_scores) / len(affinity_scores)
+        # Alta afinidad → baja saturación temática; convertir a penalización
+        theme_sat = 1.0 - avg_affinity
+    else:
+        theme_sat = 0.0   # con 1 publicación no hay secuencia que evaluar
+
+    return 0.40 * time_sat + 0.30 * type_sat + 0.30 * theme_sat
 
 
 # ── Objetivo 5: Tiempo de producción normalizado ──────────────────────────────

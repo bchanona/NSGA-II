@@ -13,3 +13,12 @@ DAY_NAMES = {
     0:'Lunes', 1:'Martes', 2:'Miércoles', 3:'Jueves',
     4:'Viernes', 5:'Sábado', 6:'Domingo'
 }
+
+# Etiquetas visuales para los temas de secuencia (sᵢ)
+THEME_LABELS = {
+    'educativo':      'Educativo',
+    'entretenimiento':'Entretenimiento',
+    'promocional':    'Promocional',
+    'inspiracional':  'Inspiracional',
+    'tutorial':       'Tutorial',
+}
