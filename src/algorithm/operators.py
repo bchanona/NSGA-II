@@ -1,15 +1,3 @@
-"""
-operators.py — Operadores genéticos para NSGA-II (SocialGenOpt)
-
-CORRECCIONES respecto a la versión anterior:
-  1. tournament_select recibe el mapa rank precalculado en nsga2.py a través
-     de 'fronts', construyéndolo una sola vez por generación en lugar de
-     recalcularlo en cada llamada al selector (era O(pop²) innecesario).
-  2. crossover llama a repair() para garantizar que el hijo cumpla la
-     restricción MAX_PER_DAY antes de devolverlo.
-  3. mutate conserva la llamada a repair() al final.
-"""
-
 import random
 from copy import deepcopy
 from src.utils.repair import repair

@@ -1,19 +1,3 @@
-"""
-nsga2.py — Algoritmo NSGA-II para SocialGenOpt
-Alineado con la implementación del artículo GfG / Deb et al. 2002.
-
-CORRECCIONES respecto a la versión anterior:
-  1. Selección de la siguiente generación: cuando un frente no cabe completo,
-     se ordena por crowding distance DESCENDENTE y se toman los primeros
-     'remaining' individuos. Antes el sorted() usaba claves incorrectas porque
-     new_crowding indexaba sobre la población combinada pero los índices no
-     siempre correspondían.
-  2. Se calcula crowding distance ANTES de la selección de padres en cada
-     generación, usando los datos del frente actual (no el combinado).
-  3. El log de evolución registra también saturación y tiempo de producción
-     para facilitar diagnóstico de convergencia.
-"""
-
 import numpy as np
 import random
 from src.domain.individual import random_individual
@@ -134,11 +118,8 @@ def nsga2(knowledge, types, hours, days,
 def run_nsga2(knowledge, types, hours, days,
               pop_size=60, generations=80, n_posts=7,
               mutation_rate=0.3, seed=42):
-    """
-    Wrapper para compatibilidad con api.py.
-    Llama a nsga2() con los parámetros correctos, inicializa la normalización
-    y devuelve también la población inicial para la ruta /api/comparison.
-    """
+    
+
     from copy import deepcopy
     from src.domain.objectives import init_normalization
 

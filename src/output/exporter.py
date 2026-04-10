@@ -1,16 +1,3 @@
-"""
-exporter.py — Exportación de resultados para SocialGenOpt
-
-CORRECCIONES respecto a la versión anterior:
-  1. evolution.csv ahora incluye las columnas avg_saturation y avg_prod_time
-     que nsga2.py registra en cada generación (antes se perdían).
-  2. score_solution: se eliminó el 'diversity_bonus' artificial que era
-     consistente con la penalización removida en objectives.py.
-     Ahora el ranking usa engagement como criterio principal, con retención
-     y alcance como desempate secundario.
-  3. print_best_calendars: sin cambios de lógica.
-"""
-
 import pandas as pd
 import os
 from src.domain.constants import DAY_NAMES

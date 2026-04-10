@@ -1,6 +1,6 @@
 """
 api.py — FastAPI backend para SocialGenOpt
-Idea de negocio: "PostPulse AI" — SaaS de optimización de calendarios editoriales
+SaaS de optimización de calendarios editoriales
 para creadores de contenido y agencias de marketing digital.
 
 RUTAS:

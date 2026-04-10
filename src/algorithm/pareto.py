@@ -1,16 +1,3 @@
-"""
-pareto.py — Non-dominated sorting y crowding distance para NSGA-II
-Alineado con el algoritmo del artículo GfG / Deb et al. 2002.
-
-CORRECCIONES respecto a la versión anterior:
-  1. fast_non_dominated_sort: construye S[p] y n_dom[p] en una sola pasada
-     (igual que el paper original), evitando el doble conteo que causaba
-     clasificaciones incorrectas de frentes.
-  2. crowding_distance: omite la acumulación cuando el individuo ya tiene inf,
-     y usa el rango del frente local (no global) para la normalización.
-"""
-
-
 def dominates(a, b):
     """
     True si 'a' domina a 'b' bajo minimización:
