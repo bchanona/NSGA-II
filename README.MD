@@ -24,7 +24,7 @@ El proyecto está diseñado como un **monolito**, donde cada carpeta cumple una 
 ```
 NSGA-II/
 ├── data/
-│   └── knowledge_base.csv      # Base de conocimiento (historial simulado, métricas por franja horaria y tipo de contenido)
+│   └── knowledge_base.csv      # Base de conocimiento 
 ├── src/
 │   ├── algorithm/               # Núcleo del algoritmo genético multiobjetivo (NSGA-II)
 │   ├── domain/                  # Modelos de dominio y entidades del problema
